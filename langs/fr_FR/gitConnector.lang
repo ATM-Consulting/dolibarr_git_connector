@@ -1,0 +1,5 @@
+#
+# Core
+#
+GIT_MODULE_DESCRIPTION = Module pour intéragir avec les API GitHub et GitLab
+GIT_MODULE_LONG_DESCRIPTION = Module pour intéragir avec les API GitHub et GitLab
