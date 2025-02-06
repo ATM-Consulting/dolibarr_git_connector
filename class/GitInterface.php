@@ -24,4 +24,15 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	protected function addHeaders(array $headers): void {
 		$this->headers = array_merge($this->headers, $headers);
 	}
+	private function getCurlInstance(string $apiEndpoint): CurlHandle {
+		$curl = curl_init();
+		$curlOptions = [
+			CURLOPT_URL 			=> $this->baseUrl.$apiEndpoint,
+			CURLOPT_HTTPHEADER 		=> $this->headers,
+			CURLOPT_RETURNTRANSFER 	=> true
+		];
+		curl_setopt_array($curl, $curlOptions);
+
+		return $curl;
+	}
 }
