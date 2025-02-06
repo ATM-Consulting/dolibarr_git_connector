@@ -3,3 +3,6 @@
 #
 GIT_MODULE_DESCRIPTION = Module to interact with GitHub and GitLab API
 GIT_MODULE_LONG_DESCRIPTION = Module to interact with GitHub and GitLab API
+GIT_SETUP_PAGE = Configuration page of GitConnector
+GIT_GITHUB_TOKEN = GitHub token
+GIT_GITLAB_TOKEN = GitLab token
