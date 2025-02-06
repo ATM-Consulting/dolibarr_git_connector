@@ -52,4 +52,10 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			'responseError'	=> $responseError,
 		];
 	}
+	private function setResponseFormat(string $message, int $statusCode): array {
+		return [
+			'message'	=> $message,
+			'statusCode'=> $statusCode
+		];
+	}
 }
