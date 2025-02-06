@@ -58,4 +58,10 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			'statusCode'=> $statusCode
 		];
 	}
+	private static function getToken(): string {
+		if (!self::$token) {
+			self::$token = getDolGlobalString(self::TOKEN_CONST_NAME);
+		}
+		return self::$token;
+	}
 }
