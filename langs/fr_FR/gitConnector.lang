@@ -6,3 +6,8 @@ GIT_MODULE_LONG_DESCRIPTION = Module pour intéragir avec les API GitHub et GitL
 GIT_SETUP_PAGE = Page de configuration GitConnector
 GIT_GITHUB_TOKEN = Token GitHub
 GIT_GITLAB_TOKEN = Token GitLab
+
+#
+# API
+#
+GIT_UNAUTHORIZED = Identifiants Git non valides

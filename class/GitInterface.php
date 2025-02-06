@@ -35,4 +35,21 @@ abstract class GitInterface implements GitStatusCodeInterface {
 
 		return $curl;
 	}
+	private function getCurlResult(CurlHandle $curl): array {
+		global $langs;
+
+		$response = curl_exec($curl);
+		$statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		$responseError = curl_error($curl);
+
+		if ($statusCode === self::STATUS_UNAUTHORIZED) {
+			throw new ErrorException($langs->trans('GIT_UNAUTHORIZED'));
+		}
+
+		return [
+			'response'		=> json_decode($response, true),
+			'statusCode'	=> $statusCode,
+			'responseError'	=> $responseError,
+		];
+	}
 }
