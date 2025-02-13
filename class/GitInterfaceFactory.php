@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__."/../core/lib/autoloader.php";
+
 class GitInterfaceFactory {
 
 	public static function create(GitPlatform $platform, $repo, $owner, $baseUrl): GitInterface {
