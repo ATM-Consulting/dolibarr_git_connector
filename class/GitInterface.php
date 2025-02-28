@@ -6,9 +6,9 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	private array $headers = [];
 
 	public function __construct(
-		private string $repository,
-		private string $owner,
-		private string $baseUrl
+		protected string $repository,
+		protected string $owner,
+		protected string $baseUrl
 	) {
 		$this->headers = [
 			'Authorization' => 'Bearer '.self::getToken(),
