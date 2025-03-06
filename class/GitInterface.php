@@ -12,7 +12,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	) {
 		$this->headers = [
 			'Authorization' => 'Bearer '.self::getToken(),
-			'User-Agent' 	=> 'Git Connector',
+			'User-Agent' 	=> 'Dolibarr/GitConnector',
 		];
 	}
 
