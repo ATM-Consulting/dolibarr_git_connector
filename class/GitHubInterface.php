@@ -17,13 +17,31 @@ class GitHubInterface extends GitInterface {
 		// TODO: Implement createRepositoryBranch() method.
 		return [];
 	}
-	public function getRepoPullRequestList(): array {
-		// TODO: Implement getRepoPullRequestList() method.
-		return [];
-	}
-	public function getRepoPullRequestsList(): array {
-		// TODO: Implement getRepoPullRequestsList() method.
-		return [];
+
+	/**
+	 * @param array $parameters
+	 *        - state (string)    => pull requests state: all | closed | open
+	 *        - base (string)     => filter on the base branch name: main
+	 *        - per_page (int)    => limit number of result: 10
+	 *        - page (int)        => page number of result to fetch: 1
+	 * @param bool $useDefaultParameters default true, put false to erase default parameters
+	 * @return array
+	 * @throws ErrorException
+	 */
+	public function getRepoPullRequestList(array $parameters = [], bool $useDefaultParameters = true): array {
+		$defaultParameters = [
+			"state" 	=> "open",
+			"base"  	=> "main",
+			"per_page" 	=> 10,
+			"page"		=> 1
+		];
+		$parameters = $useDefaultParameters ? array_merge($defaultParameters, $parameters) : $parameters;
+
+		$queryParameters = http_build_query($parameters);
+		$apiEndpoint = "/repos/$this->owner/$this->repository/pulls?$queryParameters";
+
+		$curl = $this->getCurlInstance($apiEndpoint);
+		return $this->getCurlResult($curl)['response'];
 	}
 	public function getBranchUrl(string $branchName): string {
 		// TODO: Implement getBranchUrl() method.
