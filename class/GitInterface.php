@@ -3,7 +3,7 @@
 abstract class GitInterface implements GitStatusCodeInterface {
 	protected const TOKEN_CONST_NAME = "GIT_GIT_TOKEN";
 	private static ?string $token = null;
-	private array $headers = [];
+	protected array $headers = [];
 
 	public function __construct(
 		protected string $repository,
@@ -24,19 +24,30 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	protected function addHeaders(array $headers): void {
 		$this->headers = array_merge($this->headers, $headers);
 	}
-	private function getCurlInstance(string $apiEndpoint): CurlHandle {
+	protected function getCurlInstance(string $apiEndpoint): CurlHandle {
 		$curl = curl_init();
+
+		$headers = array_map(fn($key, $value) => "$key: $value", array_keys($this->headers), $this->headers);
+
 		$curlOptions = [
 			CURLOPT_URL 			=> $this->baseUrl.$apiEndpoint,
-			CURLOPT_HTTPHEADER 		=> $this->headers,
+			CURLOPT_HTTPHEADER 		=> $headers,
 			CURLOPT_RETURNTRANSFER 	=> true
 		];
 		curl_setopt_array($curl, $curlOptions);
 
 		return $curl;
 	}
-	private function getCurlResult(CurlHandle $curl): array {
+
+	/**
+	 * @param CurlHandle $curl
+	 * @return array
+	 * @throws ErrorException
+	 */
+	protected function getCurlResult(CurlHandle $curl): array {
 		global $langs;
+
+		$langs->load("gitConnector@gitConnector");
 
 		$response = curl_exec($curl);
 		$statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -44,15 +55,18 @@ abstract class GitInterface implements GitStatusCodeInterface {
 
 		if ($statusCode === self::STATUS_UNAUTHORIZED) {
 			throw new ErrorException($langs->trans('GIT_UNAUTHORIZED'));
+		} elseif ($statusCode >= 400) {
+			$message = $responseError ?: json_decode($response, true) ?: $response;
+			throw new ErrorException($langs->trans('GIT_BAD_REQUEST', $message));
 		}
 
 		return [
-			'response'		=> json_decode($response, true),
+			'response'		=> json_decode($response, true) ?? $response,
 			'statusCode'	=> $statusCode,
 			'responseError'	=> $responseError,
 		];
 	}
-	private function setResponseFormat(string $message, int $statusCode): array {
+	protected function setResponseFormat(string $message, int $statusCode): array {
 		return [
 			'message'	=> $message,
 			'statusCode'=> $statusCode

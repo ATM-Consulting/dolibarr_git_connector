@@ -11,3 +11,4 @@ GIT_GITLAB_TOKEN = GitLab token
 # API
 #
 GIT_UNAUTHORIZED = Invalid Git credentials
+GIT_BAD_REQUEST = An error has occurred in the API call: %s
