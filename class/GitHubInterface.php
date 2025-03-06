@@ -51,4 +51,25 @@ class GitHubInterface extends GitInterface {
 		// TODO: Implement getBranchSha() method.
 		return "";
 	}
+
+	/**
+	 * Retrieve all repository branches
+	 * Give a specific branch name to get all information about this one particularly
+	 *
+	 * Returned array of branches, with name, HEAD commit SHA and URL and protected state, for all branches
+	 * Returned a lot of information, for specific branch
+	 *
+	 * @param string|null $branchName
+	 * @return array
+	 * @throws ErrorException
+	 */
+	public function getBranches(?string $branchName = null): array {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/branches";
+		if ($branchName) {
+			$apiEndpoint .= "/$branchName";
+		}
+
+		$curl = $this->getCurlInstance($apiEndpoint);
+		return $this->getCurlResult($curl)['response'];
+	}
 }
