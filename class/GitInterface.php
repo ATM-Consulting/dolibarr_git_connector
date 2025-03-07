@@ -36,7 +36,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 		$curlPrivate = $additionalOptions[CURLOPT_POSTFIELDS] ?? [];
 
 		// In some cases, Git directly returns an endpoint to fetch, so the base url of the API is already defined.
-		$url = str_starts_with($apiEndpoint, $this->baseUrl) ? $apiEndpoint : $this->baseUrl.$apiEndpoint;
+		$url = preg_match("#^https?://#", $apiEndpoint) ? $apiEndpoint : $this->baseUrl.$apiEndpoint;
 		$curlOptions = [
 			CURLOPT_URL 			=> $url,
 			CURLOPT_HTTPHEADER 		=> $headers,
