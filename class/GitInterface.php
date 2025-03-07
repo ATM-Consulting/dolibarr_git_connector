@@ -32,13 +32,15 @@ abstract class GitInterface implements GitStatusCodeInterface {
 		$curl = curl_init();
 
 		$headers = array_map(fn($key, $value) => "$key: $value", array_keys($this->headers), $this->headers);
+		$curlPrivate = json_encode($additionalOptions);
 
 		// In some cases, Git directly returns an endpoint to fetch, so the base url of the API is already defined.
 		$url = str_starts_with($apiEndpoint, $this->baseUrl) ? $apiEndpoint : $this->baseUrl.$apiEndpoint;
 		$curlOptions = [
 			CURLOPT_URL 			=> $url,
 			CURLOPT_HTTPHEADER 		=> $headers,
-			CURLOPT_RETURNTRANSFER 	=> true
+			CURLOPT_RETURNTRANSFER 	=> true,
+			CURLOPT_PRIVATE 		=> $curlPrivate
 		];
 		$curlOptions += $additionalOptions;
 		curl_setopt_array($curl, $curlOptions);
@@ -56,6 +58,9 @@ abstract class GitInterface implements GitStatusCodeInterface {
 
 		$response = curl_exec($curl);
 		$statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		$sentData = curl_getinfo($curl, CURLINFO_PRIVATE);
+		$sentMethod = curl_getinfo($curl, CURLINFO_EFFECTIVE_METHOD);
+		$fetchedUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
 		$responseError = curl_error($curl);
 
 		if ($statusCode === self::STATUS_UNAUTHORIZED) {
