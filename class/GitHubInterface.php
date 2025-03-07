@@ -47,9 +47,18 @@ class GitHubInterface extends GitInterface {
 		// TODO: Implement getBranchUrl() method.
 		return "";
 	}
-	public function getBranchSha(string $branchName): string|bool {
-		// TODO: Implement getBranchSha() method.
-		return "";
+
+	/**
+	 * Retrieve branch SHA if the branch is found
+	 * Throw error from getBranch() otherwise
+	 *
+	 * @param string $branchName
+	 * @return string
+	 * @throws ErrorException
+	 */
+	public function getBranchSha(string $branchName): string {
+		$branchInformation = $this->getBranch($branchName);
+		return $branchInformation['commit']['sha'];
 	}
 
 	/**
