@@ -4,6 +4,7 @@ interface GitStatusCodeInterface {
 	public const STATUS_OK 				= 200;
 	public const STATUS_CREATED 		= 201;
 	public const STATUS_MULTI_STATUS	= 207;
+	public const STATUS_MOVED_PERMANENTLY	= 301;
 	public const STATUS_NOT_MODIFIED 	= 304;
 	public const STATUS_UNAUTHORIZED	= 401;
 	public const STATUS_NOT_FOUND 		= 404;
