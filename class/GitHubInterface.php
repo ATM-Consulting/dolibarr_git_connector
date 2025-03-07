@@ -4,6 +4,8 @@ class GitHubInterface extends GitInterface {
 
 	protected const TOKEN_CONST_NAME = 'GIT_GITHUB_TOKEN';
 
+	private array $cache = [];
+
 	public function __construct(string $repo, string $owner, string $baseUrl) {
 		parent::__construct($repo, $owner, $baseUrl);
 
@@ -216,6 +218,8 @@ class GitHubInterface extends GitInterface {
 		];
 		$curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
 		$this->getCurlResult($curl);
+
+		$this->unsetCache("contents");
 	}
 
 	/**
@@ -231,7 +235,52 @@ class GitHubInterface extends GitInterface {
 		if ($ref) {
 			$apiEndpoint .= "?ref=$ref";
 		}
+
+		if ($this->getCache("contents", $apiEndpoint)) {
+			return $this->getCache("contents", $apiEndpoint);
+		}
+
 		$curl = $this->getCurlInstance($apiEndpoint);
-		return $this->getCurlResult($curl);
+		$response = $this->getCurlResult($curl);
+
+		$this->addCache("contents", $apiEndpoint, $response);
+		return $response;
+	}
+
+	/**
+	 * @param string $subject
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
+	private function addCache(string $subject, string $key, mixed $value): void {
+		$key = md5($key);
+		$this->cache[$subject][$key] = $value;
+	}
+
+	/**
+	 * @param string|null $subject
+	 * @param string|null $key
+	 * @return void
+	 */
+	private function unsetCache(?string $subject = null, ?string $key = null): void {
+		if (!$subject) {
+			$this->cache = [];
+			return;
+		}
+		if (!$key) {
+			unset($this->cache[$subject]);
+			return;
+		}
+		unset ($this->cache[$subject][md5($key)]);
+	}
+
+	/**
+	 * @param string $subject
+	 * @param string $key
+	 * @return mixed
+	 */
+	private function getCache(string $subject, string $key): mixed {
+		return $this->cache[$subject][md5($key)] ?? null;
 	}
 }
