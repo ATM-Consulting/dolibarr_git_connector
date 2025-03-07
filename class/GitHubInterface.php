@@ -13,9 +13,32 @@ class GitHubInterface extends GitInterface {
 		];
 		$this->addHeaders($gitHubHeaders);
 	}
-	public function createRepositoryBranch(string $branchName): array {
-		// TODO: Implement createRepositoryBranch() method.
-		return [];
+
+	/**
+	 * Return new branch information
+	 * Throw an error otherwise
+	 *
+	 * @param string $branchName
+	 * @param string $sourceBranchName
+	 * @return array
+	 * @throws ErrorException
+	 */
+	public function createRepositoryBranch(string $branchName, string $sourceBranchName = "main"): array {
+		$sourceBranchSha = $this->getBranchSha($sourceBranchName);
+		$apiEndpoint = "/repos/$this->owner/$this->repository/git/refs";
+
+		$parameters = [
+			"ref" => "refs/heads/$branchName",
+			"sha" => $sourceBranchSha
+		];
+		$additionalOptions = [
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => json_encode($parameters)
+		];
+		$curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
+		$response = $this->getCurlResult($curl);
+
+		return $response['response'];
 	}
 
 	/**

@@ -20,7 +20,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	}
 
 	public abstract function getRepoPullRequestList(): array;
-	public abstract function createRepositoryBranch(string $branchName): array;
+	public abstract function createRepositoryBranch(string $branchName, string $sourceBranchName): array;
 	public abstract function getBranchUrl(string $branchName): string;
 	public abstract function getBranchSha(string $branchName): string;
 	public abstract function getBranches(?string $branchName = null): array;
