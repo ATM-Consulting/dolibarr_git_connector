@@ -64,12 +64,33 @@ class GitHubInterface extends GitInterface {
 	 * @throws ErrorException
 	 */
 	public function getBranches(?string $branchName = null): array {
+		global $langs;
+
 		$apiEndpoint = "/repos/$this->owner/$this->repository/branches";
 		if ($branchName) {
 			$apiEndpoint .= "/$branchName";
 		}
 
 		$curl = $this->getCurlInstance($apiEndpoint);
-		return $this->getCurlResult($curl)['response'];
+		$response = $this->getCurlResult($curl);
+
+		if ($response['statusCode'] === self::STATUS_MOVED_PERMANENTLY) {
+			if (!isset($response['response']['url'])) {
+				throw new ErrorException($langs->trans('GIT_BAD_REQUEST'));
+			}
+			$curl = $this->getCurlInstance($response['response']['url']);
+			$response = $this->getCurlResult($curl);
+		}
+
+		return $response['response'];
+	}
+
+	/**
+	 * @param string $branchName
+	 * @return array
+	 * @throws ErrorException
+	 */
+	public function getBranch(string $branchName): array {
+		return $this->getBranches($branchName);
 	}
 }
