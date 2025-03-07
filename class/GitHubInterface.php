@@ -150,12 +150,24 @@ class GitHubInterface extends GitInterface {
 	 * @throws GitException
 	 */
 	public function getFileContent(string $filePath, ?string $ref = null): string {
-		$apiEndpoint = "/repos/$this->owner/$this->repository/contents/$filePath";
+		$fileInformation = $this->getContents($filePath, $ref)["response"];
+		return base64_decode($fileInformation["content"]);
+	}
+
+	/**
+	 * Get contents of a file or a directory in the repository
+	 *
+	 * @param string $path		path of the file or directory from the repository root
+	 * @param string|null $ref	name of the commit/tag/branch on which fetch the content - Default: repository's default branch
+	 * @return array			file information or array of file information
+	 * @throws GitException
+	 */
+	private function getContents(string $path, ?string $ref = null): array {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/contents/$path";
 		if ($ref) {
 			$apiEndpoint .= "?ref=$ref";
 		}
 		$curl = $this->getCurlInstance($apiEndpoint);
-		$response = $this->getCurlResult($curl);
-		return base64_decode($response["response"]["content"]);
+		return $this->getCurlResult($curl);
 	}
 }
