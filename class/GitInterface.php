@@ -30,8 +30,10 @@ abstract class GitInterface implements GitStatusCodeInterface {
 
 		$headers = array_map(fn($key, $value) => "$key: $value", array_keys($this->headers), $this->headers);
 
+		// In some cases, Git directly returns an endpoint to fetch, so the base url of the API is already defined.
+		$url = str_starts_with($apiEndpoint, $this->baseUrl) ? $apiEndpoint : $this->baseUrl.$apiEndpoint;
 		$curlOptions = [
-			CURLOPT_URL 			=> $this->baseUrl.$apiEndpoint,
+			CURLOPT_URL 			=> $url,
 			CURLOPT_HTTPHEADER 		=> $headers,
 			CURLOPT_RETURNTRANSFER 	=> true
 		];
