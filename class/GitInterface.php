@@ -24,6 +24,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	public abstract function getBranchUrl(string $branchName): string;
 	public abstract function getBranchSha(string $branchName): string;
 	public abstract function getBranches(?string $branchName = null): array;
+	public abstract function getFileContent(string $filePath): string;
 
 	protected function addHeaders(array $headers): void {
 		$this->headers = array_merge($this->headers, $headers);
