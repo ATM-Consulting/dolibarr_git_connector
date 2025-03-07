@@ -58,7 +58,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 		$responseError = curl_error($curl);
 
 		if ($statusCode === self::STATUS_UNAUTHORIZED) {
-			throw new ErrorException($langs->trans('GIT_UNAUTHORIZED'));
+			throw new ErrorException($langs->trans('GIT_UNAUTHORIZED'), $statusCode);
 		} elseif ($statusCode >= 400) {
 			if ($responseError) {
 				$message = $responseError;
@@ -68,7 +68,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			}
 			$message = $message ?? $response;
 
-			throw new ErrorException($langs->trans('GIT_BAD_REQUEST', $message));
+			throw new ErrorException($langs->trans('GIT_BAD_REQUEST', $message), $statusCode);
 		}
 
 		return [

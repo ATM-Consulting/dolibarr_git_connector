@@ -94,7 +94,7 @@ class GitHubInterface extends GitInterface {
 
 		if ($response['statusCode'] === self::STATUS_MOVED_PERMANENTLY) {
 			if (!isset($response['response']['url'])) {
-				throw new ErrorException($langs->trans('GIT_BAD_REQUEST'));
+				throw new ErrorException($langs->trans('GIT_BAD_REQUEST'), $response['statusCode']);
 			}
 			$curl = $this->getCurlInstance($response['response']['url']);
 			$response = $this->getCurlResult($curl);
