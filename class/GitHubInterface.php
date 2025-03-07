@@ -167,6 +167,57 @@ class GitHubInterface extends GitInterface {
 		$fileInformation = $this->getContents($filePath, $ref)["response"];
 		return $fileInformation["sha"];
 	}
+
+	/**
+	 * Update a file content
+	 * We can provide some additional parameters to be more precise on the commit
+	 * Returned void on success, or throw GitException otherwise
+	 *
+	 * @param string $filePath
+	 * @param string $fileContent
+	 * @param array $optionalInformation
+	 * 				- string fileSha 	=> SHA of the file - will be fetched if not provided
+	 * 				- string branch		=> branch on which to update file - Default: main repository's branch
+	 * 				- array committer	=> person that commit the update, that must contain name and email, and can contain a date - Default: authenticated user
+	 * 				- array author		=> author of the update, that must contain name and email, and can can contain a date - Default: committer, or authenticated user otherwise
+	 * @return void
+	 * @throws GitException
+	 */
+	public function updateFileContents(string $filePath, string $fileContent, array $optionalInformation = []): void {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/contents/$filePath";
+
+		$commitMessage = $optionalInformation["commitMessage"] ?? "Update $filePath";
+		$fileContent = base64_decode($fileContent, true) ? $fileContent : base64_encode($fileContent); // the content must be base64 encoded, so we encode it if needed
+		$fileSha = $optionalInformation["fileSha"] ?? $this->getFileSha($filePath, $optionalInformation["branch"] ?? null);
+
+		$parameters = [
+			"message"	=> $commitMessage,
+			"content"	=> $fileContent,
+			"sha"		=> $fileSha
+		];
+
+		if (isset($optionalInformation["branch"])) {
+			$parameters["branch"] = $optionalInformation["branch"];
+		}
+		if (isset($optionalInformation["committer"])) {
+			if (isset($optionalInformation["committer"]["name"]) && isset($optionalInformation["committer"]["email"])) {
+				$parameters["committer"] = $optionalInformation["committer"];
+			}
+		}
+		if (isset($optionalInformation["author"])) {
+			if (isset($optionalInformation["author"]["name"]) && isset($optionalInformation["author"]["email"])) {
+				$parameters["author"] = $optionalInformation["author"];
+			}
+		}
+
+		$additionalOptions = [
+			CURLOPT_CUSTOMREQUEST => "PUT",
+			CURLOPT_POSTFIELDS => json_encode($parameters)
+		];
+		$curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
+		$this->getCurlResult($curl);
+	}
+
 	/**
 	 * Get contents of a file or a directory in the repository
 	 *
