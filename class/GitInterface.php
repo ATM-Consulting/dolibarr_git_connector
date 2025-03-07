@@ -10,6 +10,9 @@ abstract class GitInterface implements GitStatusCodeInterface {
 		protected string $owner,
 		protected string $baseUrl
 	) {
+		global $langs;
+		$langs->load("gitConnector@gitConnector");
+
 		$this->headers = [
 			'Authorization' => 'Bearer '.self::getToken(),
 			'User-Agent' 	=> 'Dolibarr/GitConnector',
@@ -49,8 +52,6 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	 */
 	protected function getCurlResult(CurlHandle $curl): array {
 		global $langs;
-
-		$langs->load("gitConnector@gitConnector");
 
 		$response = curl_exec($curl);
 		$statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
