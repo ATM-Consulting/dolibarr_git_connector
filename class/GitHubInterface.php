@@ -155,6 +155,19 @@ class GitHubInterface extends GitInterface {
 	}
 
 	/**
+	 * Get a file SHA
+	 * Throw GitException otherwise
+	 *
+	 * @param string $filePath
+	 * @param string|null $ref
+	 * @return string
+	 * @throws GitException
+	 */
+	public function getFileSha(string $filePath, ?string $ref = null): string {
+		$fileInformation = $this->getContents($filePath, $ref)["response"];
+		return $fileInformation["sha"];
+	}
+	/**
 	 * Get contents of a file or a directory in the repository
 	 *
 	 * @param string $path		path of the file or directory from the repository root
