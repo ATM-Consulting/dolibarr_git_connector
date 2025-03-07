@@ -48,7 +48,7 @@ class modGitConnector extends DolibarrModules {
 		$this->conflictwith = [];
 
 		$this->langfiles = ["gitConnector@gitConnector"];
-		$this->phpmin = [8, 1];
+		$this->phpmin = [8, 2];
 		$this->need_dolibarr_version = [19, 0];
 		$this->need_javascript_ajax = 0;
 
