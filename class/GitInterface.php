@@ -32,7 +32,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 		$curl = curl_init();
 
 		$headers = array_map(fn($key, $value) => "$key: $value", array_keys($this->headers), $this->headers);
-		$curlPrivate = json_encode($additionalOptions);
+		$curlPrivate = $additionalOptions[CURLOPT_POSTFIELDS] ?? [];
 
 		// In some cases, Git directly returns an endpoint to fetch, so the base url of the API is already defined.
 		$url = str_starts_with($apiEndpoint, $this->baseUrl) ? $apiEndpoint : $this->baseUrl.$apiEndpoint;
@@ -51,20 +51,25 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	/**
 	 * @param CurlHandle $curl
 	 * @return array
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	protected function getCurlResult(CurlHandle $curl): array {
 		global $langs;
 
 		$response = curl_exec($curl);
 		$statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		$sentData = curl_getinfo($curl, CURLINFO_PRIVATE);
-		$sentMethod = curl_getinfo($curl, CURLINFO_EFFECTIVE_METHOD);
-		$fetchedUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+		$context = [
+			"url"	=> curl_getinfo($curl, CURLINFO_EFFECTIVE_URL),
+			"method"=> curl_getinfo($curl, CURLINFO_EFFECTIVE_METHOD),
+			"data"	=> curl_getinfo($curl, CURLINFO_PRIVATE)
+		];
+		if (is_string($context["data"])) {
+			$context["data"] = json_decode($context["data"]) ?? $context["data"];
+		}
 		$responseError = curl_error($curl);
 
 		if ($statusCode === self::STATUS_UNAUTHORIZED) {
-			throw new ErrorException($langs->trans('GIT_UNAUTHORIZED'), $statusCode);
+			throw new GitException($langs->trans('GIT_UNAUTHORIZED'), $statusCode, $context);
 		} elseif ($statusCode >= 400) {
 			if ($responseError) {
 				$message = $responseError;
@@ -74,7 +79,7 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			}
 			$message = $message ?? $response;
 
-			throw new ErrorException($langs->trans('GIT_BAD_REQUEST', $message), $statusCode);
+			throw new GitException($langs->trans('GIT_BAD_REQUEST', $message), $statusCode, $context);
 		}
 
 		return [

@@ -21,7 +21,7 @@ class GitHubInterface extends GitInterface {
 	 * @param string $branchName
 	 * @param string $sourceBranchName
 	 * @return array
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function createRepositoryBranch(string $branchName, string $sourceBranchName = "main"): array {
 		$sourceBranchSha = $this->getBranchSha($sourceBranchName);
@@ -49,7 +49,7 @@ class GitHubInterface extends GitInterface {
 	 *        - page (int)        => page number of result to fetch: 1
 	 * @param bool $useDefaultParameters default true, put false to erase default parameters
 	 * @return array
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function getRepoPullRequestList(array $parameters = [], bool $useDefaultParameters = true): array {
 		$defaultParameters = [
@@ -73,7 +73,7 @@ class GitHubInterface extends GitInterface {
 	 *
 	 * @param string $branchName
 	 * @return string
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function getBranchUrl(string $branchName): string {
 		$branchInformation = $this->getBranch($branchName);
@@ -86,7 +86,7 @@ class GitHubInterface extends GitInterface {
 	 *
 	 * @param string $branchName
 	 * @return string
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function getBranchSha(string $branchName): string {
 		$branchInformation = $this->getBranch($branchName);
@@ -102,7 +102,7 @@ class GitHubInterface extends GitInterface {
 	 *
 	 * @param string|null $branchName
 	 * @return array
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function getBranches(?string $branchName = null): array {
 		global $langs;
@@ -117,7 +117,12 @@ class GitHubInterface extends GitInterface {
 
 		if ($response['statusCode'] === self::STATUS_MOVED_PERMANENTLY) {
 			if (!isset($response['response']['url'])) {
-				throw new ErrorException($langs->trans('GIT_BAD_REQUEST'), $response['statusCode']);
+				$context = [
+					"url"	=> $apiEndpoint,
+					"method"=> "GET",
+					"data"	=> $response,
+				];
+				throw new GitException($langs->trans('GIT_BAD_REDIRECT_STATUS'), $response['statusCode']);
 			}
 			$curl = $this->getCurlInstance($response['response']['url']);
 			$response = $this->getCurlResult($curl);
@@ -129,7 +134,7 @@ class GitHubInterface extends GitInterface {
 	/**
 	 * @param string $branchName
 	 * @return array
-	 * @throws ErrorException
+	 * @throws GitException
 	 */
 	public function getBranch(string $branchName): array {
 		return $this->getBranches($branchName);

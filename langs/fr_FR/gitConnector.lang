@@ -12,3 +12,4 @@ GIT_GITLAB_TOKEN = Token GitLab
 #
 GIT_UNAUTHORIZED = Identifiants Git non valides
 GIT_BAD_REQUEST = Une erreur est survenue dans l'appel API: %s
+GIT_BAD_REDIRECT_STATUS = L'API n'a pas fournit d'URL de redirection pour le code lié
