@@ -139,4 +139,23 @@ class GitHubInterface extends GitInterface {
 	public function getBranch(string $branchName): array {
 		return $this->getBranches($branchName);
 	}
+
+	/**
+	 * Get a file content
+	 * We can specify on which commit, tag, or branch we want to get the file content
+	 *
+	 * @param string $filePath	absolute path to file from repository root
+	 * @param string|null $ref	name of commit/tag/branch on which fetch the file - Default: repository's default branch
+	 * @return string			file contents
+	 * @throws GitException
+	 */
+	public function getFileContent(string $filePath, ?string $ref = null): string {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/contents/$filePath";
+		if ($ref) {
+			$apiEndpoint .= "?ref=$ref";
+		}
+		$curl = $this->getCurlInstance($apiEndpoint);
+		$response = $this->getCurlResult($curl);
+		return base64_decode($response["response"]["content"]);
+	}
 }
