@@ -43,9 +43,18 @@ class GitHubInterface extends GitInterface {
 		$curl = $this->getCurlInstance($apiEndpoint);
 		return $this->getCurlResult($curl)['response'];
 	}
+
+	/**
+	 * Retrieve branch API URL if the branch is found
+	 * Throw error from getBranch() otherwise
+	 *
+	 * @param string $branchName
+	 * @return string
+	 * @throws ErrorException
+	 */
 	public function getBranchUrl(string $branchName): string {
-		// TODO: Implement getBranchUrl() method.
-		return "";
+		$branchInformation = $this->getBranch($branchName);
+		return $branchInformation['commit']['url'];
 	}
 
 	/**
