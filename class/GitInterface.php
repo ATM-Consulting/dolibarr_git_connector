@@ -2,13 +2,18 @@
 
 abstract class GitInterface implements GitStatusCodeInterface {
 	protected const TOKEN_CONST_NAME = "GIT_GIT_TOKEN";
-	private static ?string $token = null;
-	protected array $headers = [];
+    protected const DEFAULT_OWNER_CONST_NAME = "GIT_GIT_OWNER";
+    protected const BASE_API_URL_CONST_NAME = "GIT_GIT_BASE_API_URL";
+    protected array $headers = [];
+    private static ?string $token = null;
 
-	public function __construct(
+    /**
+     * @throws GitException
+     */
+    public function __construct(
 		protected string $repository,
-		protected string $owner,
-		protected string $baseUrl
+		protected ?string $owner = null,
+        protected ?string $baseUrl = null
 	) {
 		global $langs;
 		$langs->load("gitConnector@gitConnector");
@@ -17,6 +22,17 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			'Authorization' => 'Bearer '.self::getToken(),
 			'User-Agent' 	=> 'Dolibarr/GitConnector',
 		];
+
+        $this->owner = $owner ?? getDolGlobalString(static::DEFAULT_OWNER_CONST_NAME);
+        $this->baseUrl = $baseUrl ?? getDolGlobalString(static::BASE_API_URL_CONST_NAME);
+
+        if (!$this->owner || !$this->baseUrl) {
+            throw new GitException($langs->transnoentities("GIT_MISSING_OWNER_OR_BASE_URL"), 500, [
+                "defaultOwner"  => $this->owner,
+                "baseUrl"       => $this->baseUrl,
+            ]);
+        }
+
 	}
 
 	public abstract function getRepoPullRequestList(): array;

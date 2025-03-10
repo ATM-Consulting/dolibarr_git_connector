@@ -3,6 +3,8 @@
 class GitLabInterface extends GitInterface {
 
 	protected const TOKEN_CONST_NAME = 'GIT_GITLAB_TOKEN';
+	protected const DEFAULT_OWNER_CONST_NAME = "GIT_GITLAB_DEFAULT_OWNER";
+	protected const BASE_API_URL_CONST_NAME = "GIT_GITLAB_BASE_API_URL";
 
 	public function createRepositoryBranch(string $branchName): array {
 		// TODO: Implement createRepositoryBranch() method.

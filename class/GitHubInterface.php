@@ -3,10 +3,12 @@
 class GitHubInterface extends GitInterface {
 
 	protected const TOKEN_CONST_NAME = 'GIT_GITHUB_TOKEN';
+	protected const DEFAULT_OWNER_CONST_NAME = "GIT_GITHUB_DEFAULT_OWNER";
+	protected const BASE_API_URL_CONST_NAME = "GIT_GITHUB_BASE_API_URL";
 
 	private array $cache = [];
 
-	public function __construct(string $repo, string $owner, string $baseUrl) {
+	public function __construct(string $repo, ?string $owner, ?string $baseUrl) {
 		parent::__construct($repo, $owner, $baseUrl);
 
 		$gitHubHeaders = [
