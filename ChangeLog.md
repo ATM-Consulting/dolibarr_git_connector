@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 0.1 - 2025-03-10
+## 1.0 - 2025-03-10
 - **Git Factory**: Implemented a factory for creating Git connectors based on the specified Git platform
 - **GitHub Connector**: Added a Git connector for the GitHub platform
 - **API Calls**:
