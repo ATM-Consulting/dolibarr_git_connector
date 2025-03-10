@@ -50,21 +50,35 @@ print load_fiche_titre($langs->trans('GIT_SETUP_PAGE'), $backLink, 'fa-code-bran
 print dol_get_fiche_head([], 'config', $langs->trans('GIT_SETUP_PAGE'), -2);
 
 $parametersList = [
-	'GIT_GITHUB_TOKEN',
-	'GIT_GITLAB_TOKEN'
+	"GitHub" => [
+		"GIT_GITHUB_TOKEN",
+		"GIT_GITHUB_BASE_API_URL",
+		"GIT_GITHUB_DEFAULT_OWNER"
+	],
+	"GitLab" => [
+		"GIT_GITLAB_TOKEN",
+		"GIT_GITLAB_BASE_API_URL",
+		"GIT_GITLAB_DEFAULT_OWNER"
+	]
 ];
-?>
-<table class="noborder">
-	<tr class="liste_titre">
-		<td><?= $langs->trans('Parameter') ?></td>
-		<td class="right" style="padding-right: 150px"><?= $langs->trans('Value') ?></td>
-	</tr>
-<?php
-	foreach ($parametersList as $parameter) {
-		$parameterValue = getDolGlobalString($parameter);
-		$isToken = (stristr($parameter, 'token') !== false);
-		?>
-		<tr class="oddeven">
+foreach ($parametersList as $section => $parameters) {
+	?>
+	<table class="centpercent notopnoleftnoright table-fiche-title">
+		<tr class="titre">
+			<td class="nobordernopadding valignmiddle col-title"><?= $section ?></td>
+		</tr>
+	</table>
+	<table class="noborder" width="100%">
+		<tr class="liste_titre">
+			<td><?= $langs->trans("Parameter") ?></td>
+			<td colspan="2"><?= $langs->trans("Value") ?></td>
+		</tr>
+	<?php
+		foreach ($parameters as $parameter) {
+			$parameterValue = getDolGlobalString($parameter);
+			$isToken = (stristr($parameter, 'token') !== false);
+			?>
+			<tr class="oddeven">
 			<td><label for="<?= $parameter ?>"><?= $langs->trans($parameter) ?></label></td>
 			<td class="right">
 				<form method="post" action="">
@@ -74,5 +88,9 @@ $parametersList = [
 				</form>
 			</td>
 		</tr>
-		<?php
-	}
+			<?php
+		}
+	?>
+	</table>
+	<?php
+}

@@ -5,7 +5,12 @@ GIT_MODULE_DESCRIPTION = Module to interact with GitHub and GitLab API
 GIT_MODULE_LONG_DESCRIPTION = Module to interact with GitHub and GitLab API
 GIT_SETUP_PAGE = Configuration page of GitConnector
 GIT_GITHUB_TOKEN = GitHub token
+GIT_GITHUB_BASE_API_URL = Base URL for GitHub API
+GIT_GITHUB_DEFAULT_OWNER = Default GitHub owner
+
 GIT_GITLAB_TOKEN = GitLab token
+GIT_GITLAB_BASE_API_URL = Base URL for GitLab API
+GIT_GITLAB_DEFAULT_OWNER = Default GitLab owner
 
 #
 # API
