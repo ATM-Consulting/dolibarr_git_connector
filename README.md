@@ -6,13 +6,13 @@ The initial version supports GitHub, with a structure that allows easy extension
 
 ## Getting Started
 ### Prerequisites
-- Ensure you have the necessary permissions to access the repositories you intend to interact with
-- Obtain the base URL for the API of the Git platform you are using
+- Ensure you have the necessary permissions to access the repositories you intend to interact with, and save the platform token in the module configuration
 
 ### Usage
-To use the module, call the static method of the `GitInterfaceFactory` class. Provide the `GitPlatform` enum value corresponding to the Git platform you want to interact with, along with the repository name, owner, and the base API URL:
+To use the module, call the static method of the `GitInterfaceFactory` class. Provide the `GitPlatform` enum value corresponding to the Git platform you want to interact with, along with the repository name, owner, and the base API URL. The owner and base API URL can also be defined in module configuration. If no owner or base URL is saved in the configurations, and none is provided in the constructor parameters, it will throw a `GitException`.
 ```php
-$gitConnector = GitInterfaceFactory::create(GitPlatform::GITHUB, "dolibarr_module_scrumproject", "ATM-Consulting", "https://api.github.com");
+$gitConnector = GitInterfaceFactory::create(GitPlatform::GITHUB, "dolibarr_module_scrumproject", "ATM-Consulting", "https://api.github.com"); // To use specific repository owner and base URL
+$gitConnector = GitInterfaceFactory::create(GitPlatform::GITHUB, "dolibarr_module_scrumproject"); // To use default configuration owner and base URL§
 ```
 Then, you can use the method you want, to do the needed stuff:
 ```php
