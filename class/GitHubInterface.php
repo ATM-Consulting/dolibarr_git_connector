@@ -98,6 +98,28 @@ class GitHubInterface extends GitInterface {
 		return $response['response'];
 	}
 
+    /**
+     * Merge the given pull request. Returns void on success, throw GitException otherwise
+     *
+     * @param int $pullRequestNumber
+     * @param string $mergeMethod
+     * @return void
+     * @throws GitException
+     */
+	public function mergePullRequest(int $pullRequestNumber, string $mergeMethod = "squash"): void {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/pulls/$pullRequestNumber/merge";
+
+        $parameters = [
+            "merge_method"  => $mergeMethod
+        ];
+        $additionalOptions = [
+            CURLOPT_CUSTOMREQUEST => "PUT",
+            CURLOPT_POSTFIELDS => json_encode($parameters)
+        ];
+        $curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
+        $this->getCurlResult($curl);
+	}
+
 	/**
 	 * Retrieve branch API URL if the branch is found
 	 * Throw error from getBranch() otherwise
