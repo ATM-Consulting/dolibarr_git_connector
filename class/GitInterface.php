@@ -36,6 +36,8 @@ abstract class GitInterface implements GitStatusCodeInterface {
 	}
 
 	public abstract function getRepoPullRequestList(): array;
+	public abstract function createPullRequest(string $sourceBranchName, string $baseBranchName, ?string $title = null): array;
+	public abstract function mergePullRequest(int $pullRequestNumber, string $mergeMethod): void;
 	public abstract function createRepositoryBranch(string $branchName, string $sourceBranchName): array;
 	public abstract function getBranchUrl(string $branchName): string;
 	public abstract function getBranchSha(string $branchName): string;
