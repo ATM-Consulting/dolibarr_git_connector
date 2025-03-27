@@ -207,6 +207,18 @@ class GitHubInterface extends GitInterface {
 		return base64_decode($fileInformation["content"]);
 	}
 
+    /**
+     * Return array of folder contents
+     *
+     * @param string $folderPath
+     * @param string|null $ref
+     * @return array
+     * @throws GitException
+     */
+    public function getFolderContent(string $folderPath, ?string $ref = null): array {
+        return $this->getContents($folderPath, $ref)["response"];
+    }
+
 	/**
 	 * Get a file SHA
 	 * Throw GitException otherwise
