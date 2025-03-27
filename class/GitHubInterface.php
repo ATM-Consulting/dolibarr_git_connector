@@ -72,6 +72,33 @@ class GitHubInterface extends GitInterface {
 	}
 
 	/**
+	 * Return the new pull request information
+	 *
+	 * @param string $sourceBranchName
+	 * @param string $baseBranchName
+	 * @param string|null $title
+	 * @return array
+	 * @throws GitException
+	 */
+	public function createPullRequest(string $sourceBranchName, string $baseBranchName, ?string $title = null): array {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/pulls";
+
+		$parameters = [
+			"head"	=> $sourceBranchName,
+			"base"	=> $baseBranchName,
+			"title"	=> $title ?? "Merge branch $sourceBranchName into $baseBranchName"
+		];
+		$additionalOptions = [
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => json_encode($parameters)
+		];
+		$curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
+		$response = $this->getCurlResult($curl);
+
+		return $response['response'];
+	}
+
+	/**
 	 * Retrieve branch API URL if the branch is found
 	 * Throw error from getBranch() otherwise
 	 *
