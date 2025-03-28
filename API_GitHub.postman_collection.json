@@ -307,6 +307,177 @@
 			"response": []
 		},
 		{
+			"name": "Pull Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body to extract the id property",
+							"let responseBody = pm.response.json();",
+							"",
+							"// Store the id property in the collection variable PullRequestId",
+							"pm.collectionVariables.set(\"PullRequestNumber\", responseBody.number.toString());",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"connection": true,
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{github-api-accept}}",
+						"type": "text"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "{{github-api-version}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Test creation of pull request from API\",\n    \"head\": \"3.49\",\n    \"base\": \"main\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-url}}/repos/{{owner}}/{{repo}}/pulls",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo}}",
+						"pulls"
+					]
+				},
+				"description": "Retrieve list of pull requests for the repository"
+			},
+			"response": []
+		},
+		{
+			"name": "Pull Request (Merge)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"User object in the response should exist and be an object\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    ",
+							"    responseData.forEach(function(pullRequest) {",
+							"        pm.expect(pullRequest.user).to.exist.and.to.be.an('object');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Base object contains expected properties\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(pullRequest) {",
+							"        pm.expect(pullRequest.base).to.be.an('object');",
+							"        pm.expect(pullRequest.base.label).to.exist;",
+							"        pm.expect(pullRequest.base.ref).to.exist;",
+							"        pm.expect(pullRequest.base.sha).to.exist;",
+							"        pm.expect(pullRequest.base.user).to.exist;",
+							"        pm.expect(pullRequest.base.repo).to.exist;",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Title field is a non-empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('array');",
+							"    responseData.forEach(function(pullRequest) {",
+							"        pm.expect(pullRequest.title).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Title should not be empty\");",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"connection": true,
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "{{github-api-accept}}",
+						"type": "text"
+					},
+					{
+						"key": "X-GitHub-Api-Version",
+						"value": "{{github-api-version}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"merge_method\": \"squash\" // merge | squash | rebase\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-url}}/repos/{{owner}}/{{repo}}/pulls/{{PullRequestNumber}}/merge",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo}}",
+						"pulls",
+						"{{PullRequestNumber}}",
+						"merge"
+					]
+				},
+				"description": "Retrieve list of pull requests for the repository"
+			},
+			"response": []
+		},
+		{
 			"name": "Branches",
 			"event": [
 				{
@@ -867,6 +1038,27 @@
 				"description": "API endpoint to update new the module descriptor of the module"
 			},
 			"response": []
+		},
+		{
+			"name": "ZIP File",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base-url}}/repos/{{owner}}/{{repo}}/zipball/main",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"repos",
+						"{{owner}}",
+						"{{repo}}",
+						"zipball",
+						"main"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -916,6 +1108,11 @@
 			"key": "base-url",
 			"value": "https://api.github.com",
 			"type": "string"
+		},
+		{
+			"key": "PullRequestNumber",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
