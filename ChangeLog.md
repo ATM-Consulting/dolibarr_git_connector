@@ -12,4 +12,4 @@
   - **Branch Info**: Retrieve information for a specific branch in a repository
   - **File Info**: Retrieve information of a file in a repository (including its content)
   - **Update File**: Update the content of a file in a repository
-  - **Caching System**: Implemented a caching system to avoid redundant API calls, improving performance and efficiency
+- **Caching System**: Implemented a caching system to avoid redundant API calls, improving performance and efficiency
