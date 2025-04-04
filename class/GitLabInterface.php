@@ -40,4 +40,21 @@ class GitLabInterface extends GitInterface {
 	public function updateFileContents(string $filePath, string $fileContent, array $optionalInformation = []): void {
 		// TODO: Implement updateFileContents() method.
 	}
+
+	public function createPullRequest(string $sourceBranchName, string $baseBranchName, ?string $title = null): array
+	{
+		// TODO: Implement createPullRequest() method.
+		return [];
+	}
+
+	public function mergePullRequest(int $pullRequestNumber, string $mergeMethod): void
+	{
+		// TODO: Implement mergePullRequest() method.
+	}
+
+	public function getFolderContent(string $folderPath): array
+	{
+		// TODO: Implement getFolderContent() method.
+		return [];
+	}
 }
