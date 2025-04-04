@@ -97,6 +97,11 @@ abstract class GitInterface implements GitStatusCodeInterface {
 			} else {
 				$json = json_decode($response, true);
 				$message = $json["message"] ?? $response;
+				if (isset($json["errors"])) {
+					foreach ($json["errors"] as $error) {
+						$message .= " - ".$error["message"];
+					}
+				}
 			}
 			$message = $message ?? $response;
 
