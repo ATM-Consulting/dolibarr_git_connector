@@ -286,6 +286,29 @@ class GitHubInterface extends GitInterface {
 	}
 
 	/**
+	 * Return repository archive as string
+	 *
+	 * @param string|null $branchName
+	 * @return string
+	 * @throws GitException
+	 */
+	public function downloadRepositoryArchive(?string $branchName = null): string {
+		$apiEndpoint = "/repos/$this->owner/$this->repository/zipball";
+		if ($branchName) {
+			$apiEndpoint .= "/$branchName";
+		}
+
+		$additionalOptions = [
+			CURLOPT_FOLLOWLOCATION => true
+		];
+
+		$curl = $this->getCurlInstance($apiEndpoint, $additionalOptions);
+		$response = $this->getCurlResult($curl);
+
+		return $response['response'];
+	}
+
+	/**
 	 * Get contents of a file or a directory in the repository
 	 *
 	 * @param string $path		path of the file or directory from the repository root
