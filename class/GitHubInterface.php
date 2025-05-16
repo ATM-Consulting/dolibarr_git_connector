@@ -234,7 +234,7 @@ class GitHubInterface extends GitInterface {
 	}
 
 	/**
-	 * Update a file content
+	 * Upload a file
 	 * We can provide some additional parameters to be more precise on the commit
 	 * Returned void on success, or throw GitException otherwise
 	 *
@@ -248,19 +248,19 @@ class GitHubInterface extends GitInterface {
 	 * @return void
 	 * @throws GitException
 	 */
-	public function updateFileContents(string $filePath, string $fileContent, array $optionalInformation = []): void {
+	public function uploadFile(string $filePath, string $fileContent, array $optionalInformation = []): void {
 		$apiEndpoint = "/repos/$this->owner/$this->repository/contents/$filePath";
 
-		$commitMessage = $optionalInformation["commitMessage"] ?? "Update $filePath";
+		$commitMessage = $optionalInformation["commitMessage"] ?? "Upload $filePath";
 		$fileContent = base64_decode($fileContent, true) ? $fileContent : base64_encode($fileContent); // the content must be base64 encoded, so we encode it if needed
-		$fileSha = $optionalInformation["fileSha"] ?? $this->getFileSha($filePath, $optionalInformation["branch"] ?? null);
 
 		$parameters = [
 			"message"	=> $commitMessage,
-			"content"	=> $fileContent,
-			"sha"		=> $fileSha
+			"content"	=> $fileContent
 		];
-
+		if (isset($optionalInformation["fileSha"])) {
+			$parameters["sha"] = $optionalInformation["fileSha"];
+		}
 		if (isset($optionalInformation["branch"])) {
 			$parameters["branch"] = $optionalInformation["branch"];
 		}
@@ -283,6 +283,29 @@ class GitHubInterface extends GitInterface {
 		$this->getCurlResult($curl);
 
 		$this->unsetCache("contents");
+	}
+
+	/**
+	 * Update a file content
+	 * We can provide some additional parameters to be more precise on the commit
+	 * Returned void on success, or throw GitException otherwise
+	 *
+	 * @param string $filePath
+	 * @param string $fileContent
+	 * @param array $optionalInformation
+	 * 				- string fileSha 	=> SHA of the file - will be fetched if not provided
+	 * 				- string branch		=> branch on which to update file - Default: main repository's branch
+	 * 				- array committer	=> person that commit the update, that must contain name and email, and can contain a date - Default: authenticated user
+	 * 				- array author		=> author of the update, that must contain name and email, and can can contain a date - Default: committer, or authenticated user otherwise
+	 * @return void
+	 * @throws GitException
+	 */
+	public function updateFileContents(string $filePath, string $fileContent, array $optionalInformation = []): void {
+		$fileSha = $optionalInformation["fileSha"] ?? $this->getFileSha($filePath, $optionalInformation["branch"] ?? null);
+		$optionalInformation["fileSha"] = $fileSha;
+		$optionalInformation["commitMessage"] = $optionalInformation["commitMessage"] ?? "Update $filePath";
+
+		self::uploadFile($filePath, $fileContent, $optionalInformation);
 	}
 
 	/**
